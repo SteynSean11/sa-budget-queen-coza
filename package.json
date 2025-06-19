@@ -1,0 +1,26 @@
+{
+  "name": "sabudgetqueen-app",
+  "version": "1.0.0",
+  "description": "SA Budget Queen Application",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "build": "esbuild index.tsx --bundle --outfile=dist/bundle.js --platform=browser --format=esm --jsx=automatic --loader:.ts=tsx --loader:.tsx=tsx --external:react --external:react-dom/* --external:react/*",
+    "dev": "npm run build && npm start",
+    "postinstall": "npm run build"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.2",
+    "typescript": "^5.4.5",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@types/express": "^4.17.21"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
