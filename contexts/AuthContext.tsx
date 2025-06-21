@@ -84,21 +84,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const updateUserProfile = async (updatedProfileData: Partial<UserProfileData>): Promise<void> => {
     await new Promise(resolve => setTimeout(resolve, 300));
-    if (currentUser) {
-      setCurrentUser(prevUser => ({
-        ...prevUser!,
-        ...updatedProfileData,
-        familyComposition: {
-          ...prevUser!.familyComposition,
-          ...updatedProfileData.familyComposition,
-        } as FamilyComposition,
-        interestsHobbies: updatedProfileData.interestsHobbies !== undefined ? updatedProfileData.interestsHobbies : prevUser!.interestsHobbies,
-        financialGoals: updatedProfileData.financialGoals !== undefined ? updatedProfileData.financialGoals : prevUser!.financialGoals,
-      }));
-      console.log("Profile updated (mock):", currentUser);
-    } else {
+    if (!currentUser) {
       console.error("No current user to update.");
+      return;
     }
+
+    setCurrentUser(prevUser => {
+      if (!prevUser) return null; // Should not happen, but a safe guard
+
+      const updatedUser = {
+        ...prevUser,
+        ...updatedProfileData,
+        // Ensure nested objects like familyComposition are merged, not replaced
+        familyComposition: {
+          ...prevUser.familyComposition,
+          ...updatedProfileData.familyComposition,
+        },
+      };
+      console.log("Profile updated (mock):", updatedUser);
+      return updatedUser;
+    });
   };
 
 
