@@ -6,40 +6,36 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 8080;
 
+// --- Pre-cache index.html at startup for performance ---
+let indexHtmlContent;
+try {
+  const indexPath = path.join(__dirname, 'index.html');
+  const htmlData = fs.readFileSync(indexPath, 'utf8');
+  const apiKey = process.env.API_KEY || ''; // Default to empty string if not set
+
+  // Inject the API_KEY into a placeholder script tag.
+  // This makes `window.process.env.API_KEY` available to the client.
+  // JSON.stringify ensures the key is properly escaped.
+  indexHtmlContent = htmlData.replace(
+    '<script id="env-vars"></script>',
+    `<script>
+      window.process = { 
+        env: { 
+          API_KEY: ${JSON.stringify(apiKey)}
+        } 
+      };
+    </script>`
+  );
+} catch (err) {
+  console.error('FATAL: Could not read or process index.html. The server cannot start.', err);
+  process.exit(1); // Exit if the main template file is missing or unreadable
+}
+
 // Serve static files from 'dist' (where bundle.js will be)
 app.use('/dist', express.static(path.join(__dirname, 'dist')));
 
 // Serve static assets from 'public' (e.g., favicon, images)
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Function to read index.html and inject API_KEY
-const serveIndexWithApiKey = (res) => {
-  const indexPath = path.join(__dirname, 'index.html');
-  fs.readFile(indexPath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading index.html:', err);
-      return res.status(500).send('Error loading application.');
-    }
-
-    const apiKey = process.env.API_KEY || ''; // Default to empty string if not set
-
-    // Inject the API_KEY into a global variable for client-side scripts
-    // This makes `process.env.API_KEY` available via `window.process.env.API_KEY`
-    // The JSON.stringify ensures the key is properly escaped if it contains special characters.
-    const result = data.replace(
-      '<script id="env-vars"></script>',
-      `<script>
-        window.process = { 
-          env: { 
-            API_KEY: ${JSON.stringify(apiKey)}
-          } 
-        };
-      </script>`
-    );
-    res.setHeader('Content-Type', 'text/html');
-    res.send(result);
-  });
-};
 
 // All GET requests that are not for static assets already served
 // (like /dist/bundle.js or files in /public) will serve index.html.
@@ -51,8 +47,9 @@ app.get('*', (req, res) => {
     // If it looks like a static asset that wasn't found by express.static, send 404.
     return res.status(404).send('Resource not found');
   }
-  // Otherwise, serve the index.html (which will handle client-side routing).
-  serveIndexWithApiKey(res);
+  // Otherwise, serve the cached and processed index.html.
+  res.setHeader('Content-Type', 'text/html');
+  res.send(indexHtmlContent);
 });
 
 app.listen(port, () => {

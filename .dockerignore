@@ -1,0 +1,23 @@
+# Git files
+.git
+.gitignore
+
+# Node modules
+node_modules
+
+# Logs
+npm-debug.log*
+
+# Environment files
+.env
+.env.local
+
+# IDE and OS files
+.vscode
+.idea
+.DS_Store
+
+# Other
+README.md
+Dockerfile
+docker-compose.yml

@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      # In development, you might want to mount volumes to see changes live.
+      # For production, you build the image and run it without volumes.
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./server.js:/app/server.js
+      - ./package.json:/app/package.json
+    environment:
+      # This allows you to pass environment variables to your container
+      - NODE_ENV=development
+      - PORT=8080
+    env_file:
+      # For a real project, create a .env file locally (it's gitignored)
+      - .env
