@@ -1,0 +1,14 @@
+<!-- index.html -->
+<!-- ...existing code... -->
+<script type="module" src="/src/index.tsx"></script>
+<!-- ...existing code... -->
+
+<!-- vite.config.js -->
+export default {
+  // ...existing config...
+  build: {
+    rollupOptions: {
+      input: 'index.html'
+    }
+  }
+}

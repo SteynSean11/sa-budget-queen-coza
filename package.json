@@ -10,10 +10,8 @@
     "lint": "eslint \"{src,components}/**/*.{ts,tsx}\" --quiet",
     "preview": "vite preview",
     "start": "node server.js",
-    "lint": "eslint \"{src,components}/**/*.{ts,tsx}\" --quiet",
     "lint:fix": "eslint \"{src,components}/**/*.{ts,tsx}\" --fix",
-    "format": "prettier --write \"./**/*.{ts,tsx,js,json,html,md}\"",
-    "postinstall": "npm run build"
+    "format": "prettier --write \"./**/*.{ts,tsx,js,json,html,md}\""
   },
   "dependencies": {
     "express": "^4.19.2",
