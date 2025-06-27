@@ -16,5 +16,8 @@ export default defineConfig(({ mode }) => {
           input: path.resolve(process.cwd(), 'index.html'), // Explicitly define the HTML entry point
         },
       },
+      server: {
+        port: 8080,
+      },
     };
 });
